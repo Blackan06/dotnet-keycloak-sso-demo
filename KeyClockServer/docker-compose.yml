@@ -1,0 +1,6 @@
+services:
+  keyclockserver:
+    image: ${DOCKER_REGISTRY-}keyclockserver
+    build:
+      context: .
+      dockerfile: KeyClockServer/Dockerfile
