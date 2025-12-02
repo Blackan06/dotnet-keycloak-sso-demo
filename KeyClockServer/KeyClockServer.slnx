@@ -2,5 +2,9 @@
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>
+  <Project Path="KeyClockAspire/KeyClockAspire.ApiService/KeyClockAspire.ApiService.csproj" />
+  <Project Path="KeyClockAspire/KeyClockAspire.AppHost/KeyClockAspire.AppHost.csproj" Id="831cb393-e083-4d74-ae00-d55296a255b2" />
+  <Project Path="KeyClockAspire/KeyClockAspire.ServiceDefaults/KeyClockAspire.ServiceDefaults.csproj" />
+  <Project Path="KeyClockAspire/KeyClockAspire.Web/KeyClockAspire.Web.csproj" />
   <Project Path="KeyClockServer/KeyClockServer.csproj" />
 </Solution>

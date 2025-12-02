@@ -6,5 +6,18 @@ services:
       dockerfile: KeyClockServer/Dockerfile
   keycloakdb:
     image: postgres
+  keyclockaspire.web:
+    image: ${DOCKER_REGISTRY-}keyclockaspireweb
+    build:
+      context: .
+      dockerfile: KeyClockAspire/KeyClockAspire.Web/Dockerfile
+
+  keyclockaspire.apiservice:
+    image: ${DOCKER_REGISTRY-}keyclockaspireapiservice
+    build:
+      context: .
+      dockerfile: KeyClockAspire/KeyClockAspire.ApiService/Dockerfile
+
 volumes:
   postgres_keycloakdb:
+

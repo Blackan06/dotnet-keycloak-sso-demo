@@ -4,7 +4,9 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "keyclockserver": "StartDebugging"
+        "keyclockserver": "StartDebugging",
+        "keyclockaspire.web": "StartDebugging",
+        "keyclockaspire.apiservice": "StartDebugging"
       }
     }
   }
