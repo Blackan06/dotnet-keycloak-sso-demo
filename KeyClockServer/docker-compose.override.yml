@@ -12,23 +12,23 @@
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-  postgres:
-    image: postgres:16
+  keycloakdb:
     container_name: keycloak-postgres
     environment:
       - POSTGRES_DB=keycloak
       - POSTGRES_USER=keycloak
       - POSTGRES_PASSWORD=keycloak
+    restart: always
     ports:
-      - "5437:5432"
+      - "5434:5432"
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - postgres_keycloakdb:/var/lib/postgresql
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.0
     container_name: keycloak
     depends_on:
-      - postgres
+      - keycloakdb
     command: start-dev
     environment:
       - KEYCLOAK_ADMIN=admin
@@ -36,7 +36,7 @@
 
       # Cấu hình DB
       - KC_DB=postgres
-      - KC_DB_URL=jdbc:postgresql://postgres:5432/keycloak
+      - KC_DB_URL=jdbc:postgresql://keycloakdb:5432/keycloak
       - KC_DB_USERNAME=keycloak
       - KC_DB_PASSWORD=keycloak
 

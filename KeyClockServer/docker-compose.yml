@@ -4,3 +4,7 @@ services:
     build:
       context: .
       dockerfile: KeyClockServer/Dockerfile
+  keycloakdb:
+    image: postgres
+volumes:
+  postgres_keycloakdb:
