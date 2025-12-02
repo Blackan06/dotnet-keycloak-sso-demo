@@ -46,8 +46,8 @@ namespace IdentityServer.Controller
             var form = new Dictionary<string, string>
             {
                 ["grant_type"] = "password",
-                ["client_id"] = clientId,
-                ["client_secret"] = clientSecret,
+                ["client_id"] = clientId!,
+                ["client_secret"] = clientSecret!,
                 ["username"] = request.Username,
                 ["password"] = request.Password,
                 ["scope"] = "openid profile email"

@@ -21,23 +21,24 @@ namespace IdentityServer.Controller
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest req)
         {
-            var realm = "demo";
-            var baseUrl = "http://keycloak:8080"; // host Keycloak trên máy bạn
-            var clientId = "dotnet-client";            // client built-in của Keycloak
-            var username = "admin";                // admin Keycloak
-            var password = "admin";                // pass admin Keycloak
+            var kc = _config.GetSection("Keycloak");
+
+            var realm = kc["Realm"];
+            var baseUrl = kc["BaseUrl"];
+            var adminCli = kc["AdminClientId"];
+            var adminUser = kc["AdminUser"];
+            var adminPass = kc["AdminPassword"];
 
             var client = _httpClientFactory.CreateClient();
 
-            // 1. Lấy admin access token
             var tokenRes = await client.PostAsync(
                 $"{baseUrl}/realms/master/protocol/openid-connect/token",
                 new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     ["grant_type"] = "password",
-                    ["client_id"] = clientId,
-                    ["username"] = username,
-                    ["password"] = password
+                    ["client_id"] = adminCli,
+                    ["username"] = adminUser,
+                    ["password"] = adminPass
                 }));
 
             if (!tokenRes.IsSuccessStatusCode)
@@ -52,8 +53,6 @@ namespace IdentityServer.Controller
 
             client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", adminToken);
-
-            // 2. Tạo user ở Keycloak
             var userPayload = new
             {
                 username = req.Username,
@@ -61,8 +60,15 @@ namespace IdentityServer.Controller
                 enabled = true,
                 firstName = req.FirstName,
                 lastName = req.LastName,
-                emailVerified = true,          // nếu bạn không dùng verify email
-                requiredActions = new string[] { } // clear required actions
+                emailVerified = true,
+                attributes = new Dictionary<string, string[]>
+                {
+                    ["department"] = (req.Departments != null && req.Departments.Any())
+                        ? req.Departments.ToArray()
+                        : Array.Empty<string>()
+                },
+
+                requiredActions = new string[] { } 
             };
 
 
@@ -76,11 +82,9 @@ namespace IdentityServer.Controller
                 return StatusCode(500, new { message = "Create user failed", detail = err });
             }
 
-            // Lấy Location header chứa URL user mới, trích id
-            var location = createUserRes.Headers.Location?.ToString(); // .../users/{id}
+            var location = createUserRes.Headers.Location?.ToString(); 
             var userId = location?.Split('/').LastOrDefault();
 
-            // 3. Set password cho user
             var passPayload = new
             {
                 type = "password",
